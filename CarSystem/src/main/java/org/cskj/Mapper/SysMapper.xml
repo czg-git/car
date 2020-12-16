@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cskj.Mapper.SysMapper">
+<select id="getCount" resultType="partVo">
+ select type as name,sum(num) as value from parts group by type
+</select>
+<select id="CountCarType" resultType="int">
+ select count(*) from cars group by type
+</select>
+
+<select id="CountCarBrand" resultType="int">
+ select count(*) from cars group by carbrand
+</select>
+<select id="getBrand" resultType="String">
+ select carbrand from cars group by carbrand
+</select>
+<select id="getSalary" resultType="salaryVo">
+ select pname as name,(outprice - inprice)*num*365 as value from parts
+</select>
+</mapper>

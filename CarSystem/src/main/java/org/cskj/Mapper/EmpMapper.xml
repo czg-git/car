@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cskj.Mapper.EmpMapper">
+<select id="listEmp" parameterType="emp" resultType="emp">
+select * from emp
+</select>
+<!-- 列表 -->
+<select id="pageEmp" resultType="emp">
+select * from emp
+<where>
+<if test="ename != null and ename != ''">
+			and ename LIKE '%${ename}%'
+</if>
+<if test="job != null and job != ''">
+			and job LIKE '%${job}%'
+</if>
+<if test="phone != null and phone != ''">
+			and phone LIKE '%${phone}%'
+</if>
+</where>
+</select>
+<insert id="addEmp" parameterType="emp">
+insert into emp values(null,#{ename},#{job},#{phone})
+</insert>
+<delete id="deleteEmp" parameterType="int">
+		delete from emp where eid in
+		<foreach collection="array" item="id" index="no" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+<select id="queryByEid" parameterType="java.lang.String" resultType="emp">
+select * from emp where eid =#{eid}
+</select>
+<update id="updateEmp" parameterType="emp">
+update emp set ename =#{ename},job=#{job},phone=#{phone} where eid=#{eid}
+</update>
+</mapper>

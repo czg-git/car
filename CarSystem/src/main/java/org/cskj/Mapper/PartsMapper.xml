@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cskj.Mapper.PartsMapper">
+<select id="listParts" parameterType="parts" resultType="parts">
+select * from parts
+</select>
+<resultMap type="parts" id="selectParts">
+<id column="pid" property="pid"/>
+<result column="pname" property="pname"/>
+<result column="inprice" property="inprice"/>
+<result column="outprice" property="outprice"/>
+<result column="dealers" property="dealers"/>
+<result column="phone" property="phone"/>
+<result column="indate" property="indate"/>
+<result column="num" property="num"/>
+<result column="note" property="note"/>
+<result column="type" property="type"/>
+<association property="emp" column="eid" select="queryEmpByPid"></association>
+</resultMap>
+<resultMap type="emp" id="selectEmp">
+<id column="eid" property="eid"/>
+<result column="ename" property="ename"/>
+</resultMap>
+<!-- 列表 -->
+<select id="pageParts" resultMap="selectParts">
+select * from Parts
+<where>
+<if test="pname != null and pname != ''">
+			and pname LIKE '%${pname}%'
+</if>
+<if test="inprice != null and inprice != '' and inprice != 0 and inprice != 0.0">
+			and inprice=#{inprice}
+</if>
+<if test="outprice != null and outprice != '' and outprice != 0 and outprice != 0.0">
+			and outprice=#{outprice}
+</if>
+<if test="dealers != null and dealers != ''">
+			and dealers LIKE '%${dealers}%'
+</if>
+<if test="phone != null and phone != ''">
+			and phone LIKE '%${phone}%'
+</if>
+<if test="indate != null and indate != ''">
+			and indate =#{indate}
+</if>
+<if test="num != null and num != '' and num != 0">
+			and num =#{num}
+</if>
+</where>
+</select>
+<select id="queryEmpByPid" resultMap="selectEmp">
+select * from emp where eid=#{eid}
+</select>
+<insert id="addParts" parameterType="parts">
+insert into parts values(null,#{pname},#{inprice},#{outprice},#{dealers},#{phone},#{indate},#{num},#{type},#{note},#{emp.eid})
+</insert>
+<delete id="deleteParts" parameterType="int">
+		delete from parts where pid in
+		<foreach collection="array" item="id" index="no" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+<select id="queryByPid" parameterType="java.lang.String" resultType="parts">
+select * from parts where pid =#{pid}
+</select>
+<update id="updateParts" parameterType="parts">
+update parts set pname =#{pname},inprice=#{inprice},outprice=#{outprice},dealers=#{dealers},phone=#{phone},indate =#{indate},num =#{num},note =#{note},type = #{type},eid=#{emp.eid} where pid=#{pid}
+</update>
+</mapper>

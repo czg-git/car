@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.cskj.Mapper.CarMapper">
+
+<resultMap type="car" id="selectCar">
+<id column="id" property="id"/>
+<result column="imageUrl" property="imageUrl"/>
+<result column="carbrand" property="carbrand"/>
+<result column="type" property="type"/>
+<result column="card" property="card"/>
+<result column="km" property="km"/>
+<result column="note" property="note"/>
+<result column="timemoney" property="timemoney"/>
+<result column="partmoney" property="partmoney"/>
+<result column="allmoney" property="allmoney"/>
+<result column="date" property="date"/>
+<result column="name" property="name"/>
+<result column="phone" property="phone"/>
+<result column="paystatus" property="paystatus"/>
+<association property="parts" column="pid" select="queryPartsById"></association>
+</resultMap>
+<resultMap type="parts" id="selectParts">
+<id column="pid" property="pid"/>
+<result column="pname" property="pname"/>
+</resultMap>
+<!-- 列表 -->
+<select id="listCar" parameterType="map" resultMap="selectCar">
+select * from cars
+<where>
+<if test="carbrand != null and carbrand != ''">
+			and carbrand LIKE '%${carbrand}%'
+</if>
+<if test="type != null and type != ''">
+			and type=#{type}
+</if>
+<if test="card != null and card != ''">
+			and card LIKE '%${card}%'
+</if>
+<if test="name != null and name != ''">
+			and name LIKE '%${name}%'
+</if>
+<if test="phone != null and phone != ''">
+			and phone LIKE '%${phone}%'
+</if>
+<if test="paystatus != null and paystatus != '' and paystatus != 0">
+			and paystatus =#{paystatus}
+</if>
+<if test="startdate != null and startdate != ''">
+			and date <![CDATA[ >= ]]> #{startdate}
+</if>
+<if test="enddate != null and enddate != ''">
+			and date <![CDATA[ <= ]]> #{enddate}
+</if>
+</where>
+</select>
+<select id="queryPartsById" resultMap="selectParts">
+select * from parts where pid=#{pid}
+</select>
+
+<insert id="addCar" parameterType="car">
+insert into cars values(null,#{imageUrl},#{carbrand},#{type},#{card},#{km},#{note},#{parts.pid},#{timemoney},#{partmoney},#{allmoney},now(),#{name},#{phone},#{paystatus})
+</insert>
+
+<delete id="deleteCar" parameterType="int">
+		delete from cars where id in
+		<foreach collection="array" item="id" index="no" open="("
+			separator="," close=")">
+			#{id}
+		</foreach>
+</delete>
+<select id="queryById" parameterType="java.lang.String" resultType="Car">
+select * from Cars where id =#{id}
+</select>
+<update id="updateCar" parameterType="car">
+update cars set carbrand =#{carbrand},type=#{type},card=#{card},km=#{km},note=#{note},pid=#{parts.pid},timemoney=#{timemoney},partmoney=#{partmoney},allmoney =#{allmoney},date =now(),name =#{name},phone =#{phone},paystatus = #{paystatus},imageUrl = #{imageUrl} where id=#{id}
+</update>
+</mapper>
